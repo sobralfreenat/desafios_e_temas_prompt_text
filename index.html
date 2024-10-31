@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Prompts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+            border-radius: 5px;
+        }
+        h1 {
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #output {
+            margin-top: 20px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        #themeList {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Gerador de Prompts</h1>
+
+<label for="topico">Tópico Desejado:</label>
+<input type="text" id="topico" placeholder="Digite o tópico desejado">
+
+<button onclick="gerarPrompt()">Gerar Prompt</button>
+<button onclick="copiarPrompt()">Copiar Prompt</button>
+<button onclick="salvarLista()">Salvar Lista</button>
+<label for="fileInput">Carregar Lista:</label>
+<input type="file" id="fileInput" accept=".json" onchange="carregarListaDoArquivo(event)">
+
+<div id="output"></div>
+
+<label for="themeList">Temas Gerados:</label>
+<input type="text" id="search" placeholder="Pesquisar temas..." onkeyup="filtrarTemas()">
+<select id="themeList" size="5"></select>
+
+
+<div id="MAE"></div>
+<label for="maesession">M.A.E.:</label>
+  <div class="ia-selector">
+            <label for="iaEscolhida">Escolha sua IA:</label>
+            <select id="iaEscolhida" onchange="verificarSelecaoIA()" required>
+                <option value="">Selecione uma IA</option>
+                <option value="https://chat.openai.com/">ChatGPT (OpenAI)</option>
+                <option value="https://gemini.google.com/">Gemini (Google)</option>
+                <option value="https://claude.ai/">Claude (Anthropic)</option>
+                <option value="https://copilot.microsoft.com/">Copilot (Microsoft)</option>
+                <option value="outro">Outra IA...</option>
+            </select>
+            
+            <div id="outroLinkIA" style="display: none;">
+                <label for="linkPersonalizado">Cole o link da IA:</label>
+                <input type="url" id="linkPersonalizado" placeholder="https://sua-ia-preferida.com">
+            </div>
+        </div>
+
+<div class="button-group">
+<button type="button" onclick="abrirIASelecionada()">3. Abrir IA Selecionada</button>
+
+<button class="button" onclick="abrirOuFocarJanela('https://sobralfreenat.github.io/mae_prompt_generator/', 'M.A.E.', 280, 900, 320, 100)">Encoder - M.A.E.</button>
+
+<script>
+    const temasGerados = JSON.parse(localStorage.getItem('temasGerados')) || [];
+
+    function gerarPrompt() {
+        const topico = document.getElementById('topico').value.trim();
+        if (!topico) {
+            alert('Por favor, digite um tópico.');
+            return;
+        }
+        const dataHora = new Date().toLocaleString('pt-BR'); // Formato de data e hora
+        const prompt = `
+        Liste 12 opções de temas relacionados ao ${topico}, incluindo os seguintes elementos para cada tema:
+        
+        1. Princípios: Descrição breve do tema.
+        2. Desenvolvido por: Nome do autor ou especialista associado ao tema.
+        3. Aplicação em: Uma breve explicação de como o tema pode ser aplicado na prática.
+        4. Título Principal: Um título conciso que capture a essência do tema.
+        5. Título da Thumb: Um título atraente e visualmente impactante para a thumbnail do vídeo.
+        6. Título do Vídeo: Um título otimizado para SEO que inclua palavras-chave relevantes.
+        7. Descrição: Uma descrição detalhada que explique o conteúdo do vídeo, incluindo palavras-chave e chamadas para ação.
+        8. Sugestão de Link:
+Um link direto e legível para um recurso ou produto relacionado que possa gerar receita adicional, como um curso, e-book ou ferramenta.
+
+Exemplo: https://www.exemplo.com/curso-vendas
+
+Além disso, ao fornecer links, é importante verificar se eles realmente existem e são relevantes. Aqui está uma versão revisada das sugestões de link, com URLs válidas e reconhecíveis.
+        `;
+
+        document.getElementById('output').innerText = prompt;
+        temasGerados.push(`${topico} - ${dataHora}`); // Adiciona o tópico e a data/hora à lista
+        atualizarListaTemas();
+        localStorage.setItem('temasGerados', JSON.stringify(temasGerados)); // Salva no localStorage
+    }
+
+
+function verificarSelecaoIA() {
+    const select = document.getElementById('iaEscolhida');
+    const outroLink = document.getElementById('outroLinkIA');
+    
+    if (select.value === 'outro') {
+        outroLink.style.display = 'block';
+    } else {
+        outroLink.style.display = 'none';
+    }
+}
+
+
+function abrirIASelecionada() {
+    const select = document.getElementById('iaEscolhida');
+    let url = select.value;
+    
+    if (url === 'outro') {
+        url = document.getElementById('linkPersonalizado').value;
+    }
+    
+    if (!url) {
+        alert('Por favor, selecione uma IA ou forneça um link válido!');
+        return;
+    }
+    
+    abrirOuFocarJanela(url, 'IA_Window', 800, 600, 200, 100);
+}
+
+function abrirOuFocarJanela(url, title, width, height, left, top) {
+    const newWindow = window.open(url, title, `width=${width},height=${height},left=${left},top=${top}`);
+    if (newWindow.focus) {
+        newWindow.focus();
+    }
+    document.getElementById('gptText').focus();
+}
+
+
+    function copiarPrompt() {
+        const output = document.getElementById('output').innerText;
+        navigator.clipboard.writeText(output).then(() => {
+            alert('Prompt copiado para a área de transferência!');
+        }, () => {
+            alert('Erro ao copiar o prompt.');
+        });
+    }
+
+    function atualizarListaTemas() {
+        const themeList = document.getElementById('themeList');
+        themeList.innerHTML = ''; // Limpa a lista antes de atualizar
+
+        temasGerados.forEach((tema, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = tema; // Usa o tópico e a data/hora como texto da opção
+            themeList.appendChild(option);
+        });
+    }
+
+    function salvarLista() {
+        const jsonData = JSON.stringify(temasGerados);
+        const blob = new Blob([jsonData], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'temasGerados.json';
+        a.click();
+        URL.revokeObjectURL(url);
+        alert('Lista salva com sucesso!');
+    }
+
+    function carregarListaDoArquivo(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const savedTemas = JSON.parse(e.target.result);
+                if (Array.isArray(savedTemas)) {
+                    temasGerados.length = 0; // Limpa a lista atual
+                    temasGerados.push(...savedTemas); // Carrega a lista salva
+                    atualizarListaTemas();
+                    alert('Lista carregada com sucesso!');
+                } else {
+                    alert('Formato de arquivo inválido. Certifique-se de que é um arquivo JSON.');
+                }
+            };
+            reader.readAsText(file);
+        }
+    }
+
+    function filtrarTemas() {
+        const searchValue = document.getElementById('search').value.toLowerCase();
+        const themeList = document.getElementById('themeList');
+        
+        Array.from(themeList.options).forEach(option => {
+            const isVisible = option.text.toLowerCase().includes(searchValue);
+            option.style.display = isVisible ? 'block' : 'none';
+        });
+    }
+
+    // Carregar a lista ao iniciar
+    atualizarListaTemas();
+</script>
+
+</body>
+</html>
