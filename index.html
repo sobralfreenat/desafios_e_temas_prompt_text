@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador de Prompts</title>
+    <title>Agente - Cria Tópicos e temas por Desafios</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -28,14 +28,15 @@
         }
         button {
             padding: 10px 15px;
-            background-color: #28a745;
+            background-color: darkgreen;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
         }
         button:hover {
-            background-color: #218838;
+            background-color: lightblue;
+			color: darkgreen;
         }
         #output {
             margin-top: 20px;
@@ -50,10 +51,11 @@
     </style>
 </head>
 <body>
+<body>
+<img src="https://d1yei2z3i6k35z.cloudfront.net/3119789/666e1df34d7ed_BannerFNWAssessoriaDigitalprovisorio.png" alt="Banner" style="width: 22%; height: auto; display: block; margin-left: 600; margin-right: 420;" loading="lazy">
+<h3>AgentIA M.A.E.</h3>
 
-<h1>Gerador de Prompts</h1>
-
-<label for="topico">Tópico Desejado:</label>
+<label for="topico">Tópico / Desafio:</label>
 <input type="text" id="topico" placeholder="Digite o tópico desejado">
 
 <button onclick="gerarPrompt()">Gerar Prompt</button>
@@ -89,7 +91,7 @@
         </div>
 
 <div class="button-group">
-<button type="button" onclick="abrirIASelecionada()">3. Abrir IA Selecionada</button>
+<button type="button" onclick="abrirIASelecionada()"> Abrir IA Selecionada</button>
 
 <button class="button" onclick="abrirOuFocarJanela('https://sobralfreenat.github.io/mae_prompt_generator/', 'M.A.E.', 280, 900, 320, 100)">Encoder - M.A.E.</button>
 
@@ -113,7 +115,13 @@
         5. Título da Thumb: Um título atraente e visualmente impactante para a thumbnail do vídeo.
         6. Título do Vídeo: Um título otimizado para SEO que inclua palavras-chave relevantes.
         7. Descrição: Uma descrição detalhada que explique o conteúdo do vídeo, incluindo palavras-chave e chamadas para ação.
-        8. Sugestão de Link: Inclua sempre um link direto e verificável para um curso, e-book ou ferramenta sobre o tema no final. O link precisa ser visível e relevante, como um curso real da Udemy ou uma ferramenta confiável para construção de marca.
+        8. Sugestão de Link: Inclua sempre um link direto e verificável para
+ -  um curso, 
+ - video e canal do youtube
+ - e-book
+ - ferramenta sobre o tema no final. 
+
+**O link precisa ser visível com a  URL aparente sem título escondendo endereço e fazendo a busca**, como um curso real da Udemy, canal e video no youtube e uma ferramenta confiávelrelevante para o tópico.
 
 Além disso, ao fornecer links, é importante verificar se eles realmente existem e são relevantes.
         `;
